@@ -1,0 +1,26 @@
+{
+  "name": "curso-nodejs-dicasparadevs",
+  "version": "1.0.0",
+  "description": "Curso de Node.js",
+  "main": "app.js",
+  "scripts": {
+    "start:dev": "nodemon app.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^2.0.22"
+  },
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "bcryptjs": "^3.0.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.5.0",
+    "ejs": "^3.1.6",
+    "express": "^4.17.2",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^6.13.8",
+    "multer": "^2.0.2",
+    "nodemailer": "^7.0.5"
+  }
+}
