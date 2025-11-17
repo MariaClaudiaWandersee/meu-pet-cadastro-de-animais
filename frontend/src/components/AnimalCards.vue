@@ -11,9 +11,7 @@
       <a-card
         hoverable
         style="position: relative;"
-        @click="(e) => {
-          if (!e.target.closest('.delete-icon')) showEditModal(animal)
-        }"
+        @click="handleCardClick($event, animal)"
       >
         <CloseOutlined
           class="delete-icon"
@@ -121,6 +119,10 @@ const handleDelete = async () => {
     console.error(e)
     message.error(e.message || 'Error deleting animal.')
   }
+}
+
+const handleCardClick = (e, animal) => {
+  if (!e.target.closest('.delete-icon')) showEditModal(animal)
 }
 
 const isAdmin = computed(() => {
