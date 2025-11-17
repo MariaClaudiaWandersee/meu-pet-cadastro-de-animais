@@ -41,7 +41,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, reactive } from 'vue'
+import { ref, reactive, watch } from 'vue'
 import { message } from 'ant-design-vue'
 import { EyeOutlined, EyeInvisibleOutlined } from '@ant-design/icons-vue'
 
@@ -58,28 +58,49 @@ const formState = reactive({
 
 const showPassword = ref(false)
 
+watch(
+  () => props.open,
+  (isOpen) => {
+    if (isOpen) {
+      Object.assign(formState, {
+        name: '',
+        role: 'Attendant',
+        email: '',
+        password: ''
+      })
+      formRef.value?.clearValidate()
+    }
+  }
+)
+
 const submitForm = async () => {
   try {
     await formRef.value.validate()
 
-    const formData = new FormData()
-    formData.append('name', formState.name)
-    formData.append('role', formState.role)
-    formData.append('email', formState.email)
-    formData.append('password', formState.password)
-
     const res = await fetch(`${import.meta.env.VITE_API_URL}/users`, {
       method: 'POST',
-      body: formData
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name: formState.name,
+        role: formState.role,
+        email: formState.email,
+        password: formState.password
+      })
     })
 
-    if (!res.ok) throw new Error()
+    const data = await res.json().catch(() => null)
+
+    if (!res.ok) {
+      throw new Error(data?.message || "Error creating user")
+    }
 
     message.success('User created!')
     emit('update:open', false)
     emit('user-added')
-  } catch {
-    message.error('A user with this email address already exists.')
+
+  } catch (err) {
+    console.error("Error creating user:", err)
+    message.error(err.message)
   }
 }
 </script>

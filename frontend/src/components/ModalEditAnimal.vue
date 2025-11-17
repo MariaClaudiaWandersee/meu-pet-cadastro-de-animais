@@ -120,7 +120,7 @@ const availableVaccines = computed(() => {
   if (formState.animalType === 'dog') {
     return ['V8 ou V10', 'Antirrábica']
   } else if (formState.animalType === 'cat') {
-    return ['V4 ou V5 (múltipla felina)', 'Antirrábica', 'FeLV']
+    return ['V4 ou V5', 'Antirrábica', 'FeLV']
   }
   return []
 })

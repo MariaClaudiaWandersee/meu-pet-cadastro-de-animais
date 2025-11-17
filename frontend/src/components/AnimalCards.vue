@@ -122,7 +122,7 @@ const handleDelete = async () => {
 }
 
 const handleCardClick = (e, animal) => {
-  if (!e.target.closest('.delete-icon')) showEditModal(animal)
+  if (!e.target.closest('.delete-icon')) props.showEditModal(animal)
 }
 
 const isAdmin = computed(() => {
