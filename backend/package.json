@@ -2,9 +2,9 @@
   "name": "curso-nodejs-dicasparadevs",
   "version": "1.0.0",
   "description": "Curso de Node.js",
-  "main": "app.js",
+  "main": "server.js",
   "scripts": {
-    "start:dev": "nodemon app.js"
+    "start:dev": "nodemon server.js"
   },
   "author": "",
   "license": "ISC",
