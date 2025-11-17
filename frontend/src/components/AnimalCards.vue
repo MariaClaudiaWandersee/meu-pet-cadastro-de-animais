@@ -26,8 +26,8 @@
             <img
               alt="Animal"
               :src="animal.image 
-                ? `${import.meta.env.VITE_API_URL}${animal.image}` 
-                : `${import.meta.env.VITE_API_URL}/uploads/default.jpg`"
+                ? `${API_URL}${animal.image}` 
+                : `${API_URL}/uploads/default.jpg`"
             />
           </div>
         </template>
@@ -82,6 +82,8 @@ const props = defineProps({
     required: true
   }
 })
+
+const API_URL = import.meta.env.VITE_API_URL
 
 const localAnimals = ref([...props.animals])
 watch(() => props.animals, (newVal) => {
