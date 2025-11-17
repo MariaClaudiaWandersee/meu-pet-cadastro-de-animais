@@ -140,8 +140,8 @@ watch(
       formState.vaccines = a.vaccines || []
 
       const imageUrl = a.image
-        ? `http://localhost:8080${a.image}`
-        : 'http://localhost:8080/uploads/default.jpg'
+        ? `${import.meta.env.VITE_API_URL}${a.image}`
+        : `${import.meta.env.VITE_API_URL}/uploads/default.jpg`
 
       currentImageUrl.value = imageUrl
 
@@ -211,7 +211,7 @@ const submitForm = async () => {
       headers['Content-Type'] = 'application/json'
     }
 
-    const res = await fetch(`http://localhost:8080/animals/${props.animal._id}`, {
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/animals/${props.animal._id}`, {
       method: 'PUT',
       headers,
       body

@@ -186,7 +186,7 @@ const submitForm = async () => {
     formData.append('vaccines', JSON.stringify(formState.vaccines))
     if (formState.image) formData.append('image', formState.image)
 
-    const res = await fetch('http://localhost:8080/animals', {
+    const res = await fetch('${import.meta.env.VITE_API_URL}/animals', {
       method: 'POST',
       body: formData
     })

@@ -68,7 +68,7 @@ const submitForm = async () => {
     formData.append('email', formState.email)
     formData.append('password', formState.password)
 
-    const res = await fetch('http://localhost:8080/users', {
+    const res = await fetch('${import.meta.env.VITE_API_URL}/users', {
       method: 'POST',
       body: formData
     })

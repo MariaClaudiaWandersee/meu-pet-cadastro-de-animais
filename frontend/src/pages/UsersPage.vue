@@ -301,8 +301,8 @@ const handleConfirmDelete = async () => {
   try {
     if (confirmInput.value === key.value) {
       const url = selectedKey.value === 'animals'
-        ? `http://localhost:8080/animals/${animalToDelete.value._id}`
-        : `http://localhost:8080/users/${userToDelete.value._id}`
+        ? `${import.meta.env.VITE_API_URL}/animals/${animalToDelete.value._id}`
+        : `${import.meta.env.VITE_API_URL}/users/${userToDelete.value._id}`
 
       const response = await fetch(url, { method: 'DELETE' })
       if (!response.ok) throw new Error('Error deleting item')
@@ -332,7 +332,7 @@ const handleCancelDelete = () => {
 const fetchUsers = async () => {
   loading.value = true
   try {
-    const response = await fetch('http://localhost:8080/users')
+    const response = await fetch('${import.meta.env.VITE_API_URL}/users')
     users.value = await response.json()
   } catch (error) { console.error(error) }
   finally { loading.value = false }
@@ -341,7 +341,7 @@ const fetchUsers = async () => {
 const fetchAnimals = async () => {
   loading.value = true
   try {
-    const response = await fetch('http://localhost:8080/animals')
+    const response = await fetch('${import.meta.env.VITE_API_URL}/animals')
     if (!response.ok) throw new Error(await response.text())
     animals.value = await response.json()
   } catch (error) { console.error(error) }

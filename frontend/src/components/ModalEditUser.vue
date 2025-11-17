@@ -101,7 +101,7 @@ const submitForm = async () => {
       payload.password = formState.password
     }
 
-    const res = await fetch(`http://localhost:8080/users/${props.user._id}`, {
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/users/${props.user._id}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)

@@ -26,8 +26,8 @@
             <img
               alt="Animal"
               :src="animal.image 
-                ? `http://localhost:8080${animal.image}` 
-                : 'http://localhost:8080/uploads/default.jpg'"
+                ? `${import.meta.env.VITE_API_URL}${animal.image}` 
+                : '${import.meta.env.VITE_API_URL}/uploads/default.jpg'"
             />
           </div>
         </template>
@@ -98,7 +98,7 @@ const confirmDelete = (animal) => {
 
 const handleDelete = async () => {
   try {
-    const res = await fetch(`http://localhost:8080/animals/${animalToDelete.value._id}`, {
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/animals/${animalToDelete.value._id}`, {
       method: 'DELETE'
     })
     const data = await res.json()
