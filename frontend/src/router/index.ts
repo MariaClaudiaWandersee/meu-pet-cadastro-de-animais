@@ -6,7 +6,7 @@ import { useAuthStore } from "../stores/auth";
 
 const routes = [
   {
-    path: "/login-meu-pet",
+    path: "/login",
     name: "Login",
     component: LoginForm,
   },
@@ -23,7 +23,7 @@ const routes = [
   },
   {
     path: "/:pathMatch(.*)*",
-    redirect: "/login-meu-pet",
+    redirect: "/login",
   },
 ];
 

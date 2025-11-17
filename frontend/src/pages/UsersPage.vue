@@ -240,7 +240,7 @@ const logout = async () => {
     await new Promise(resolve => setTimeout(resolve, 900))
     localStorage.removeItem('loggedUser')
     emit('logout')
-    router.push('/login-meu-pet')
+    router.push('/login')
   } catch (error) {
     message.error('Error during logout')
   } finally {
