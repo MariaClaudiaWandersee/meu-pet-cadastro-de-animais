@@ -27,7 +27,7 @@
               alt="Animal"
               :src="animal.image 
                 ? `${import.meta.env.VITE_API_URL}${animal.image}` 
-                : '${import.meta.env.VITE_API_URL}/uploads/default.jpg'"
+                : `${import.meta.env.VITE_API_URL}/uploads/default.jpg`"
             />
           </div>
         </template>
