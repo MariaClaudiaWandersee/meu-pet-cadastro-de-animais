@@ -1,6 +1,5 @@
 require('dotenv').config();
 const express = require('express');
-const cors = require('cors');
 const path = require('path');
 const connectToDatabase = require('./src/database/connect');
 
@@ -10,7 +9,30 @@ const app = express();
 connectToDatabase();
 
 // Middlewares
-app.use(cors());
+const allowedOrigins = [
+  'http://localhost:5173',                       // frontend local Vite
+  'http://192.168.56.1:3000',                    // frontend local servindo dist
+  'https://meu-pet-cadastro-de-animais-2.onrender.com'  // frontend remoto Render
+];
+
+// Middleware universal de CORS
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  if (allowedOrigins.includes(origin)) {
+    res.header('Access-Control-Allow-Origin', origin);
+  }
+  res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type,Authorization');
+  res.header('Access-Control-Allow-Credentials', 'true');
+
+  // Responde OPTIONS imediatamente
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(204);
+  }
+
+  next();
+});
+
 app.use(express.json());
 app.use('/uploads', express.static(path.join(__dirname, 'src', 'uploads')));
 

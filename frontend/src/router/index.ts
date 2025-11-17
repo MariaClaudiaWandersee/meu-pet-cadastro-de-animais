@@ -23,7 +23,7 @@ const routes = [
   },
   {
     path: "/:pathMatch(.*)*",
-    redirect: "/login",
+    redirect: "/login-meu-pet",
   },
 ];
 
