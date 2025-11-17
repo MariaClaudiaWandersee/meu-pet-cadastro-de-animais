@@ -12,7 +12,7 @@ connectToDatabase();
 const allowedOrigins = [
   'http://localhost:5173',                       // frontend local Vite
   'http://192.168.56.1:3000',                    // frontend local servindo dist
-  'https://meu-pet.onrender.com'  // frontend remoto Render
+  'https://meu-pet-3.onrender.com'  // frontend remoto Render
 ];
 
 // Middleware universal de CORS
