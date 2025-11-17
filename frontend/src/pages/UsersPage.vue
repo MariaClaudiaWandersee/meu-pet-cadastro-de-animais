@@ -79,10 +79,9 @@
 
         <AnimalCards
           v-if="selectedKey === 'animals'"
-          :activeKey="'1'"
           :animals="filteredAnimals"
           :showEditModal="showEditModal"
-          :loggedUser="loggedUser"
+          :loggedUser="loggedUser || {}"
         />
 
         <TableUsers
@@ -332,7 +331,7 @@ const handleCancelDelete = () => {
 const fetchUsers = async () => {
   loading.value = true
   try {
-    const response = await fetch('${import.meta.env.VITE_API_URL}/users')
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/users`)
     users.value = await response.json()
   } catch (error) { console.error(error) }
   finally { loading.value = false }
@@ -341,7 +340,7 @@ const fetchUsers = async () => {
 const fetchAnimals = async () => {
   loading.value = true
   try {
-    const response = await fetch('${import.meta.env.VITE_API_URL}/animals')
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/animals`)
     if (!response.ok) throw new Error(await response.text())
     animals.value = await response.json()
   } catch (error) { console.error(error) }

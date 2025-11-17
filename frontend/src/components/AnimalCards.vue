@@ -77,7 +77,7 @@ const props = defineProps({
   },
   loggedUser: {
     type: Object,
-    required: true
+    default: null
   }
 })
 
@@ -127,7 +127,6 @@ const handleCardClick = (e, animal) => {
 
 const isAdmin = computed(() => {
   const role = props.loggedUser?.role
-  console.log('Logged user role in AnimalCards:', role)
   return role?.trim().toLowerCase() === 'admin'
 })
 </script>
