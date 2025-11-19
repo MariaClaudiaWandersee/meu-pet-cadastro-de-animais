@@ -5,10 +5,10 @@
     </div>
 
     <div class="login-card">
-      <h2>Login</h2>
+      <img src="../images/logo-fundo-branco.jpeg" alt="Logo" class="logo" />
       <form @submit.prevent="handleLogin">
         <div class="input-group">
-          <label for="email">Email</label>
+          <label for="email">{{$t('email')}}</label>
           <input
             id="email"
             type="email"
@@ -18,7 +18,7 @@
         </div>
 
         <div class="input-group password-group">
-          <label for="password">Password</label>
+          <label for="password">{{$t('password')}}</label>
           <div class="password-wrapper">
             <input
               id="password"
@@ -34,7 +34,7 @@
         </div>
 
         <button type="submit" :disabled="isLoggingIn">
-          Login
+          {{$t('login')}}
         </button>
 
         <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
@@ -50,7 +50,9 @@ import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
 import { EyeOutlined, EyeInvisibleOutlined } from '@ant-design/icons-vue'
 import { Spin } from 'ant-design-vue'
+import { useI18n } from 'vue-i18n'
 
+const { t } = useI18n()
 const email = ref('')
 const password = ref('')
 const showPassword = ref(false)
@@ -81,7 +83,7 @@ const handleLogin = async () => {
     if (error.response && error.response.status === 401) {
       errorMessage.value = error.response.data.message
     } else {
-      errorMessage.value = 'An unexpected error occurred.'
+      errorMessage.value = t('loginError')
     }
   } finally {
     isLoggingIn.value = false
@@ -220,5 +222,27 @@ button:disabled {
 
 .toggle-password:hover {
   color: #42b983;
+}
+
+@media (max-width: 480px) {
+  .login-card {
+    padding: 1.4rem;
+    max-width: 90%;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  input {
+    font-size: 0.95rem;
+    padding: 0.55rem;
+  }
+
+  button {
+    padding: 0.7rem;
+    font-size: 0.95rem;
+  }
 }
 </style>

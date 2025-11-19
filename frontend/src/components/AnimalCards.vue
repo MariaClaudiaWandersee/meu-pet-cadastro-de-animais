@@ -32,8 +32,9 @@
 
         <a-card-meta :title="animal.name">
           <template #description>
-            <p>Name: {{animal.name}}</p>
-            <p>Age: {{ animal.age ?? 'N/A' }}</p>
+            <p>{{$t('name')}}: {{animal.name}}</p>
+            <p>{{$t('sex')}}: {{ translateSex(animal.sex) }}</p>
+            <p>{{$t('age')}}: {{ animal.age ?? 'N/A' }}</p>
           </template>
         </a-card-meta>
       </a-card>
@@ -41,25 +42,28 @@
   </a-row>
 
   <div v-else style="text-align: center; padding: 24px;">
-    No animals found.
+    {{$t('noAnimals')}}
   </div>
 
   <a-modal
     :open="deleteVisible"
-    title="Confirm deletion"
-    ok-text="Yes, delete"
-    cancel-text="Cancel"
+    :title="$t('confirmDeletion')"
+    :ok-text="$t('deleteText')"
+    :cancel-text="$t('cancelText')"
     @ok="handleDelete"
     @cancel="() => (deleteVisible = false)"
   >
-    <p>Are you sure you want to delete this registration?</p>
+    <p>{{ $t('modalTextDelete') }}</p>
   </a-modal>
 </template>
 
 <script setup>
 import { ref, watch, computed } from 'vue'
 import { message } from 'ant-design-vue'
-import { CloseOutlined } from '@ant-design/icons-vue'
+import CloseOutlined from '@ant-design/icons-vue/CloseOutlined'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const props = defineProps({
   animals: {
@@ -104,7 +108,8 @@ const handleDelete = async () => {
     const data = await res.json()
     if (!res.ok) throw new Error(data.message || 'Error deleting animal.')
 
-    message.success('Animal successfully removed!')
+    message.success(t("sucessDeletingAnimal"))
+
     deleteVisible.value = false
 
     const index = localAnimals.value.findIndex(a => a._id === animalToDelete.value._id)
@@ -119,6 +124,11 @@ const handleDelete = async () => {
     console.error(e)
     message.error(e.message || 'Error deleting animal.')
   }
+}
+
+const translateSex = (sex) => {
+  if (!sex) return ''
+  return sex === 'male' ? t('male') : t('female')
 }
 
 const handleCardClick = (e, animal) => {

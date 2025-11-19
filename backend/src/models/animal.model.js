@@ -31,6 +31,11 @@ const animalSchema = new mongoose.Schema({
     type: [String],
     default: []
   },
+  sex: {
+    type: String,
+    enum: ["male", "female"],
+    required: true
+  },
 });
 
 const AnimalModel = mongoose.model("Animal", animalSchema);

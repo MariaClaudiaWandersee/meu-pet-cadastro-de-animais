@@ -2,8 +2,9 @@
   <a-modal
     centered
     :open="open"
-    title="Add animal"
+    :title="$t('addAnimal')"
     :confirm-loading="loading"
+    :cancel-text="$t('cancelText')"
     @ok="submitForm"
     @cancel="handleCancel"
     destroy-on-close
@@ -11,24 +12,31 @@
     <div class="modal-scroll">
       <a-form ref="formRef" :model="formState" layout="vertical">
 
-        <a-form-item label="Name" name="name" required>
+        <a-form-item :label="$t('name')" name="name" required>
           <a-input v-model:value="formState.name" />
         </a-form-item>
 
-        <a-form-item label="Age" name="age">
+        <a-form-item :label="$t('age')" name="age">
           <a-input v-model:value="formState.age" />
         </a-form-item>
 
-        <a-form-item label="Animal Type" name="animalType" required>
+        <a-form-item :label="$t('sex')" name="sex" required>
+          <a-radio-group v-model:value="formState.sex">
+            <a-radio value="male">{{ $t('male') }}</a-radio>
+            <a-radio value="female">{{ $t('female') }}</a-radio>
+          </a-radio-group>
+        </a-form-item>
+        
+        <a-form-item :label="$t('animalType')" name="animalType" required>
           <a-radio-group v-model:value="formState.animalType">
-            <a-radio value="dog">Cachorro</a-radio>
-            <a-radio value="cat">Gato</a-radio>
+            <a-radio value="dog">{{ $t('dog') }}</a-radio>
+            <a-radio value="cat">{{ $t('cat') }}</a-radio>
           </a-radio-group>
         </a-form-item>
 
         <a-form-item
           v-if="formState.animalType"
-          label="Vaccines"
+          :label="$t('vaccines')"
           name="vaccines"
         >
           <a-checkbox-group v-model:value="formState.vaccines">
@@ -37,21 +45,21 @@
               :key="v"
               :value="v"
             >
-              {{ v }}
+              {{ $t(v) }}
             </a-checkbox>
           </a-checkbox-group>
         </a-form-item>
 
-        <a-form-item label="Has Restriction?" name="hasRestriction">
+        <a-form-item :label="$t('hasRestrictions')" name="hasRestriction">
           <a-radio-group v-model:value="formState.hasRestriction">
-            <a-radio :value="true">Yes</a-radio>
-            <a-radio :value="false">No</a-radio>
+            <a-radio :value="true">{{ $t('yes') }}</a-radio>
+            <a-radio :value="false">{{ $t('no') }}</a-radio>
           </a-radio-group>
         </a-form-item>
 
         <a-form-item
           v-if="formState.hasRestriction"
-          label="Restriction"
+          :label="$t('restricion')"
           name="restrictionText"
         >
           <a-textarea v-model:value="formState.restrictionText" />
@@ -60,8 +68,8 @@
         <a-form-item>
           <template #label>
             <div style="display: flex; align-items: center; gap: 6px;">
-              <span>Image</span>
-              <a-tooltip title="Only one image per registration..">
+              <span>{{ $t('image') }}</span>
+              <a-tooltip :title="$t('imageTooltip')">
                 <QuestionCircleOutlined style="color: #999; cursor: pointer; font-size: 14px;" />
               </a-tooltip>
             </div>
@@ -75,8 +83,8 @@
             :before-upload="() => false"
           >
             <div>
-              <PlusOutlined />
-              <div style="margin-top: 8px">Upload</div>
+              <PlusOutlined/>
+              <div style="margin-top: 8px">{{ $t('uploadImage') }}</div>
             </div>
           </a-upload>
 
@@ -100,7 +108,9 @@
 import { ref, reactive, computed } from 'vue'
 import { message } from 'ant-design-vue'
 import { PlusOutlined, QuestionCircleOutlined } from '@ant-design/icons-vue'
+import { useI18n } from 'vue-i18n'
 
+const { t } = useI18n()
 const props = defineProps<{ open: boolean; loading: boolean }>()
 const emit = defineEmits(['update:open', 'animal-added'])
 
@@ -116,14 +126,15 @@ const formState = reactive({
   hasRestriction: false,
   restrictionText: '',
   vaccines: [] as string[],
+  sex: '',
   image: null as File | null
 })
 
 const availableVaccines = computed(() => {
   if (formState.animalType === 'dog') {
-    return ['V8 ou V10', 'Antirrábica']
+    return ['vaccineV8V10', 'vaccineAntirrabica']
   } else if (formState.animalType === 'cat') {
-    return ['V4 ou V5', 'Antirrábica', 'FeLV']
+    return ['vaccineV4V5', 'vaccineAntirrabica', 'vaccineFelv']
   }
   return []
 })
@@ -136,6 +147,7 @@ const resetForm = () => {
   formState.restrictionText = ''
   formState.vaccines = []
   formState.image = null
+  formState.sex = ''
   fileList.value = []
 }
 
@@ -178,6 +190,7 @@ const submitForm = async () => {
     formData.append('name', formState.name)
     formData.append('age', formState.age)
     formData.append('animalType', formState.animalType)
+    formData.append('sex', formState.sex)
     formData.append('hasRestriction', formState.hasRestriction ? 'true' : 'false')
     formData.append(
       'restrictionText',
@@ -191,17 +204,17 @@ const submitForm = async () => {
       body: formData
     })
 
-    if (!res.ok) throw new Error('Error adding animal.')
+    if (!res.ok) throw new Error(t('errorAddingAnimal'))
 
     const newAnimal = await res.json()
 
-    message.success('Animal created!')
+    message.success(t('sucessAddingAnimal'))
     emit('animal-added', newAnimal)
     emit('update:open', false)
     resetForm()
   } catch (error) {
     console.error(error)
-    message.error('Error creating animal')
+    message.error(t('errorAddingAnimal'))
   }
 }
 </script>

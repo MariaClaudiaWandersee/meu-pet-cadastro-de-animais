@@ -1,7 +1,13 @@
 <template>
   <a-layout style="min-height: 100vh">
-    <a-layout-sider collapsible v-model:collapsed="collapsed">
-      <div class="logo" style="padding: 24px; display: flex; justify-content: center; align-items: center;">
+    <a-layout-sider
+      collapsible
+      v-model:collapsed="collapsed"
+    >
+      <div
+        class="logo"
+        :style="{ padding: isMobile ? '12px' : '24px', display: 'flex', justifyContent: 'center', alignItems: 'center' }"
+      >
         <img v-if="!collapsed" :src="logo" alt="Logo" class="logo-header" />
         <img v-else :src="logoIcon" alt="Logo Icon" class="logo-icon" />
       </div>
@@ -13,72 +19,59 @@
           @click="handleMenuClick"
           style="border: none; background: transparent;"
         >
-          <a-menu-item key="animals">
+          <a-menu-item key="animals" :title="collapsed ? $t('registeredAnimals') : ''">
             <div style="display: flex; align-items: center; width: 100%;">
               <HeartOutlined style="color: #f5f5f5;" />
-              <span v-if="!collapsed" style="color: #f5f5f5; margin-left: 8px;">Registered Animals</span>
+              <span v-if="!collapsed" style="color: #f5f5f5; margin-left: 8px;">{{ $t('registeredAnimals') }}</span>
             </div>
           </a-menu-item>
 
-          <a-menu-item key="users">
+          <a-menu-item key="users" :title="collapsed ? $t('registeredUsers') : ''">
             <div style="display: flex; align-items: center; width: 100%;">
               <UserAddOutlined style="color: #f5f5f5;" />
-              <span v-if="!collapsed" style="color: #f5f5f5; margin-left: 8px;">Registered Users</span>
+              <span v-if="!collapsed" style="color: #f5f5f5; margin-left: 8px;">{{ $t('registeredUsers') }}</span>
             </div>
           </a-menu-item>
 
-          <a-menu-item
-            key="logout"
-            class="logout-item"
-            @click="logout"
-          >
+          <a-menu-item key="logout" class="logout-item" @click="logout" :title="collapsed ? $t('logout') : ''">
             <div style="display: flex; align-items: center; width: 100%; color: #ff4d4f;">
               <LogoutOutlined />
-              <span v-if="!collapsed" style="margin-left: 8px;">Logout</span>
+              <span v-if="!collapsed" style="margin-left: 8px;">{{ $t('logout') }}</span>
             </div>
           </a-menu-item>
         </a-menu>
       </div>
     </a-layout-sider>
 
-    <a-layout-content style="padding: 24px">
-      <a-card bordered>
-        <div
-          style="display: flex; justify-content: flex-end; align-items: center; margin-bottom: 16px; gap: 8px;"
-        >
-          <div
-            v-if="selectedKey === 'animals'"
-            style="display: flex; gap: 8px; align-items: center;"
-          >
-            <a-dropdown trigger="click">
-              <template #overlay>
-                <a-menu>
-                  <a-menu-item>
-                    <a-checkbox v-model:checked="filterDogs">Dogs</a-checkbox>
-                  </a-menu-item>
-                  <a-menu-item>
-                    <a-checkbox v-model:checked="filterCats">Cats</a-checkbox>
-                  </a-menu-item>
-                </a-menu>
-              </template>
+    <a-layout-content
+      :style="{
+        padding: '24px',
+        transition: 'margin-left 0.3s',
+        marginLeft: isMobile.value ? (collapsed.value ? '57px' : '0') : '0'
+      }"
+    >
+      <a-card
+        bordered
+        :style="{
+          marginLeft: isMobile && collapsed ? '55px' : '0'
+        }"
+        :class="[{ 'mobile-collapsed-card': isMobile && collapsed }]"
+      >
 
-              <a-input
-                v-model:value="animalFilter"
-                placeholder="Filter by name..."
-                style="width: 240px"
-                @input="applyFilter"
-              />
-            </a-dropdown>
-          </div>
-
-          <a-button type="primary" @click="showAddModal">
-            <PlusOutlined />
-            {{ selectedKey === 'animals' ? "Animal" : "User" }}
-          </a-button>
-        </div>
+        <PageHeaderActions
+          :selectedKey="selectedKey"
+          :animalFilter="animalFilter"
+          :filterDogs="filterDogs"
+          :filterCats="filterCats"
+          @update:animalFilter="val => animalFilter = val"
+          @update:filterDogs="val => filterDogs = val"
+          @update:filterCats="val => filterCats = val"
+          @add-click="showAddModal"
+        />
 
         <AnimalCards
           v-if="selectedKey === 'animals'"
+          :key="'animals'"
           :animals="filteredAnimals"
           :showEditModal="showEditModal"
           :loggedUser="loggedUser || {}"
@@ -86,6 +79,7 @@
 
         <TableUsers
           v-if="selectedKey === 'users'"
+          :key="'users'"
           :users="users"
           :isAdmin="isAdmin"
           @edit="showEditModal"
@@ -131,35 +125,14 @@
           @animal-edited="handleAnimalChanged"
         />
 
-        <a-modal
+        <ConfirmDeleteModal
           :open="isDeleteModalVisible"
-          :title="selectedKey === 'users'
-            ? `Delete user ${userToDelete?.name}?`
-            : `Delete animal ${animalToDelete?.name}?`"
-          @ok="handleConfirmDelete"
-          @cancel="handleCancelDelete"
-          :ok-button-props="{ disabled: confirmInput.value !== key.value }"
-          ok-text="Delete"
-          cancel-text="Cancel"
-          centered
-        >
-          <p>This action cannot be undone.</p>
-          <p>
-            Please enter the code
-            <strong
-              :style="{ userSelect: 'none', pointerEvents: 'none' }"
-              @contextmenu.prevent
-            >
-              {{ key }}
-            </strong>
-            below to confirm deletion.
-          </p>
-          <a-input
-            v-model:value="confirmInput"
-            @input="e => confirmInput.value = e.target.value.toUpperCase()"
-            placeholder="Enter code here"
-          />
-        </a-modal>
+          :title="`Delete ${selectedKey === 'animals' ? animalToDelete?.name : userToDelete?.name}`"
+          :confirmationKey="key"
+          @confirm="handleConfirmDelete"
+          @cancel="isDeleteModalVisible = false"
+          @regenerate="key = generateRandomKey()"
+        />
       </a-card>
 
       <a-spin
@@ -173,8 +146,7 @@
           display: flex;
           align-items: center;
           justify-content: center;
-          z-index: 9999;
-        "
+          z-index: 9999;"
       ></a-spin>
 
     </a-layout-content>
@@ -183,18 +155,24 @@
 
 <script setup>
 import { ref, computed, watch, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { message } from 'ant-design-vue'
-import { PlusOutlined, LogoutOutlined, UserAddOutlined, HeartOutlined } from '@ant-design/icons-vue'
+import { LogoutOutlined, UserAddOutlined, HeartOutlined } from '@ant-design/icons-vue'
 import { useRouter } from 'vue-router'
 
+import PageHeaderActions from '../components/PageHeaderActions.vue'
 import ModalAddUser from '../components/ModalAddUser.vue'
 import ModalEditUser from '../components/ModalEditUser.vue'
 import ModalAddAnimal from '../components/ModalAddAnimal.vue'
 import ModalEditAnimal from '../components/ModalEditAnimal.vue'
 import AnimalCards from '../components/AnimalCards.vue'
 import TableUsers from '../components/TableUsers.vue'
+import ConfirmDeleteModal from '../components/ConfirmDeleteModal.vue'
+
 import logoPrincipal from '../images/logo-principal-fundo-azul.jpeg'
 import logoPrincipalIcon from '../images/logo-principal-icon-azul.png'
+
+const { t } = useI18n()
 
 const router = useRouter()
 const collapsed = ref(false)
@@ -228,21 +206,24 @@ const isLoggingOut = ref(false)
 const logo = logoPrincipal
 const logoIcon = logoPrincipalIcon
 
-const applyFilter = () => {}
+const isMobile = ref(false)
+onMounted(() => {
+  isMobile.value = window.innerWidth <= 768
+  window.addEventListener('resize', () => isMobile.value = window.innerWidth <= 768)
+})
 
 const emit = defineEmits(['logout'])
 
 const logout = async () => {
   if (isLoggingOut.value) return
   isLoggingOut.value = true
-
   try {
     await new Promise(resolve => setTimeout(resolve, 900))
     localStorage.removeItem('loggedUser')
     emit('logout')
     router.push('/login')
   } catch (error) {
-    message.error('Error during logout')
+    message.error($t('errorLogout'))
   } finally {
     isLoggingOut.value = false
   }
@@ -298,34 +279,23 @@ const showDeleteModal = (item) => {
 
 const handleConfirmDelete = async () => {
   try {
-    if (confirmInput.value === key.value) {
-      const url = selectedKey.value === 'animals'
-        ? `${import.meta.env.VITE_API_URL}/animals/${animalToDelete.value._id}`
-        : `${import.meta.env.VITE_API_URL}/users/${userToDelete.value._id}`
+    const url = selectedKey.value === 'animals'
+      ? `${import.meta.env.VITE_API_URL}/animals/${animalToDelete.value._id}`
+      : `${import.meta.env.VITE_API_URL}/users/${userToDelete.value._id}`
 
-      const response = await fetch(url, { method: 'DELETE' })
-      if (!response.ok) throw new Error('Error deleting item')
+    const response = await fetch(url, { method: 'DELETE' })
+    if (!response.ok) throw new Error('Error deleting item')
 
-      message.success(selectedKey.value === 'animals' ? 'Animal deleted!' : 'User deleted!')
-      selectedKey.value === 'animals' ? fetchAnimals() : fetchUsers()
+    message.success(selectedKey.value === 'animals' ? $t('sucessDeletingAnimal') : $t('sucessDeletingUser'))
+    selectedKey.value === 'animals' ? fetchAnimals() : fetchUsers()
 
-      isDeleteModalVisible.value = false
-      confirmInput.value = ''
-      userToDelete.value = null
-      animalToDelete.value = null
-    } else {
-      message.error('Enter the code correctly')
-    }
+    isDeleteModalVisible.value = false
+    confirmInput.value = ''
+    userToDelete.value = null
+    animalToDelete.value = null
   } catch (error) {
-    message.error('Error deleting item: ' + error.message)
+    message.error($t('errorDeletingItem'))
   }
-}
-
-const handleCancelDelete = () => {
-  isDeleteModalVisible.value = false
-  confirmInput.value = ''
-  userToDelete.value = null
-  animalToDelete.value = null
 }
 
 const fetchUsers = async () => {
@@ -372,19 +342,15 @@ watch(selectedKey, val => { val === 'animals' ? fetchAnimals() : fetchUsers() })
 
 const handleMenuClick = e => selectedKey.value = e.key
 </script>
-
 <style scoped>
 .logo-header {
   width: 180px;
   height: auto;
 }
+
 .logo-icon {
   width: 40px;
   height: 40px;
-}
-.menu-icon {
-  width: 20px;
-  height: 20px;
 }
 
 .a-layout-sider .ant-menu-item {
@@ -415,5 +381,67 @@ const handleMenuClick = e => selectedKey.value = e.key
 :global(.ant-menu-item-selected) {
   background-color: #002140 !important;
   color: #fff !important;
+}
+
+:global(.ant-layout-sider) {
+  width: 200px !important;
+  max-width: 200px !important;
+}
+
+@media (max-width: 768px) {
+  :global(.ant-layout-sider) {
+    position: fixed !important;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: auto !important;
+    max-width: auto !important;
+    z-index: 10;
+  }
+
+  :global(.ant-layout-sider-trigger) {
+    position: fixed !important;
+    bottom: 0 !important;
+    top: auto !important;
+    height: auto !important;
+    z-index: 999;
+  }
+}
+
+:where(.css-dev-only-do-not-override-1p3hq3p).ant-card .ant-card-body {
+  padding: 24px;
+  border-radius: 0 0 8px 8px;
+}
+
+@media (max-width: 768px) {
+  .mobile-collapsed-card :where(.css-dev-only-do-not-override-1p3hq3p).ant-card .ant-card-body {
+    margin-left: 55px;
+  }
+}
+
+@media (max-width: 600px) {
+  .logo {
+    padding: 12px !important;
+  }
+
+  .logo-header {
+    width: 120px !important;
+  }
+
+  .top-actions {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 12px !important;
+  }
+
+  .filter-row {
+    width: 100% !important;
+  }
+
+  .add-button-row {
+    width: 100% !important;
+    display: flex;
+    justify-content: flex-start;
+  }
 }
 </style>

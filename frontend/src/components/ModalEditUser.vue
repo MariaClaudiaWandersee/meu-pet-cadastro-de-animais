@@ -1,32 +1,32 @@
 <template>
   <a-modal
     :open="open"
-    title="Edit user"
+    :title="t('editUser')"
     :confirm-loading="loading"
     @ok="submitForm"
     @cancel="() => emit('update:open', false)"
     destroy-on-close
   >
     <a-form ref="formRef" :model="formState" layout="vertical">
-      <a-form-item label="Name" name="name" required>
+      <a-form-item :label="t('name')" name="name" required>
         <a-input v-model:value="formState.name" />
       </a-form-item>
 
-      <a-form-item label="Role" name="role" required>
+      <a-form-item :label="t('role')" name="role" required>
         <a-radio-group v-model:value="formState.role">
-          <a-radio value="Admin">Admin</a-radio>
-          <a-radio value="Attendant">Attendant</a-radio>
+          <a-radio value="Admin">{{ t('admin') }}</a-radio>
+          <a-radio value="Attendant">{{ t('attendant') }}</a-radio>
         </a-radio-group>
       </a-form-item>
 
-      <a-form-item label="Email" name="email" required>
+      <a-form-item :label="t('email')" name="email" required>
         <a-input v-model:value="formState.email" />
       </a-form-item>
 
       <a-form-item
-        label="Password"
+        :label="t('password')"
         name="password"
-        :rules="[{ required: true, message: 'Password is required' }]"
+        required
       >
         <a-input
           :type="showPassword ? 'text' : 'password'"
@@ -49,6 +49,9 @@
 import { ref, reactive, watch } from 'vue'
 import { message } from 'ant-design-vue'
 import { EyeOutlined, EyeInvisibleOutlined } from '@ant-design/icons-vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const props = defineProps<{ open: boolean; loading: boolean; user: any }>()
 const emit = defineEmits(['update:open', 'saved'])
@@ -107,15 +110,15 @@ const submitForm = async () => {
       body: JSON.stringify(payload)
     })
 
-    if (!res.ok) throw new Error('Error updating user')
+    if (!res.ok) throw new Error(t('errorUpdateUser'))
 
-    message.success('User updated!')
+    message.success(t('sucessUpdateUser'))
     emit('update:open', false)
 
     emit('saved', { ...props.user, ...payload })
 
   } catch (err) {
-    message.error('Error updating user')
+    message.error(t('errorUpdateUser'))
   }
 }
 </script>

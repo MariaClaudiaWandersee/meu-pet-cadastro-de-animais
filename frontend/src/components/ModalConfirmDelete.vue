@@ -1,35 +1,38 @@
 <template>
   <a-modal
-    title="Confirm deletion"
+    :title="t('confirmDelete')"
     :open="visible"
     :confirm-loading="loading"
-    ok-text="Delete"
+    :ok-text="t('deleteText')"
     ok-type="danger"
     @ok="onOk"
     @cancel="onCancel"
     centered
   >
-    Are you sure you want to delete?
+    {{ t('deleteUser') }}
     <strong>{{ userName }}</strong>?
   </a-modal>
 </template>
 
 <script setup>
-import { defineProps, defineEmits, watch, ref } from 'vue';
+import { defineProps, defineEmits } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const props = defineProps({
   visible: Boolean,
   loading: Boolean,
   userName: String,
-});
+})
 
-const emit = defineEmits(['confirm', 'cancel']);
+const emit = defineEmits(['confirm', 'cancel'])
 
 function onOk() {
-  emit('confirm');
+  emit('confirm')
 }
 
 function onCancel() {
-  emit('cancel');
+  emit('cancel')
 }
 </script>
