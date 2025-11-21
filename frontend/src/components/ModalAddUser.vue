@@ -48,7 +48,7 @@ import { message } from 'ant-design-vue'
 import { EyeOutlined, EyeInvisibleOutlined } from '@ant-design/icons-vue'
 import { useI18n } from 'vue-i18n'
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 
 const props = defineProps<{ open: boolean; loading: boolean }>()
 const emit = defineEmits(['update:open', 'user-added'])
@@ -84,7 +84,9 @@ const submitForm = async () => {
 
     const res = await fetch(`${import.meta.env.VITE_API_URL}/users`, {
       method: 'POST',
-      headers: { "Content-Type": "application/json" },
+      headers: { 
+        "Content-Type": "application/json",
+        "Accept-Language": locale.value },
       body: JSON.stringify({
         name: formState.name,
         role: formState.role,
@@ -96,15 +98,15 @@ const submitForm = async () => {
     const data = await res.json().catch(() => null)
 
     if (!res.ok) {
-      throw new Error(data?.message || t('erroraddUser'))
+      throw new Error(data?.message || t('errorAddUser'))
     }
 
-    message.success(t('sucessaddUser'))
+    message.success( t('sucessAddUser') )
     emit('update:open', false)
     emit('user-added')
 
   } catch (err: any) {
-    message.error(err.message || t('erroraddUser'))
+    message.error(err.message || t('errorAddUser'))
   }
 }
 </script>

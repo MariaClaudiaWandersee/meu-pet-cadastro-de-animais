@@ -51,7 +51,7 @@ import { message } from 'ant-design-vue'
 import { EyeOutlined, EyeInvisibleOutlined } from '@ant-design/icons-vue'
 import { useI18n } from 'vue-i18n'
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 
 const props = defineProps<{ open: boolean; loading: boolean; user: any }>()
 const emit = defineEmits(['update:open', 'saved'])
@@ -106,7 +106,9 @@ const submitForm = async () => {
 
     const res = await fetch(`${import.meta.env.VITE_API_URL}/users/${props.user._id}`, {
       method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 
+        'Content-Type': 'application/json',
+        'Accept-Language': locale.value },
       body: JSON.stringify(payload)
     })
 

@@ -4,17 +4,17 @@
     :title="title"
     @ok="handleConfirm"
     @cancel="$emit('cancel')"
-    :ok-text="$t('confirmDeletion')"
-    :cancel-text="$t('cancelText')"
+    :ok-text="t('confirmDeletion')"
+    :cancel-text="t('cancelText')"
   >
     <p>
-      {{ $t("confirmDeletionKey") }}
+      {{ t("confirmDeletionKey") }}
       <strong>{{ confirmationKey }}</strong>
     </p>
 
     <a-input
       v-model:value="inputValue"
-      :placeholder="$t('enterCodeAbove')"
+      :placeholder="t('enterCodeAbove')"
       style="margin-top: 12px"
     />
   </a-modal>

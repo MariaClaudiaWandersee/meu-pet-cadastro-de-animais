@@ -408,17 +408,6 @@ const handleMenuClick = e => selectedKey.value = e.key
   }
 }
 
-:where(.css-dev-only-do-not-override-1p3hq3p).ant-card .ant-card-body {
-  padding: 24px;
-  border-radius: 0 0 8px 8px;
-}
-
-@media (max-width: 768px) {
-  .mobile-collapsed-card :where(.css-dev-only-do-not-override-1p3hq3p).ant-card .ant-card-body {
-    margin-left: 55px;
-  }
-}
-
 @media (max-width: 600px) {
   .logo {
     padding: 12px !important;
