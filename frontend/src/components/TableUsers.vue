@@ -12,6 +12,7 @@ import { computed, h, ref } from 'vue'
 import { message, Button, Checkbox } from 'ant-design-vue'
 import { EditOutlined, DeleteOutlined, CopyOutlined, FilterOutlined } from '@ant-design/icons-vue'
 import { useI18n } from 'vue-i18n'
+import { ROLES } from '../constants/roles'
 
 const { t } = useI18n()
 
@@ -21,6 +22,14 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['edit', 'delete', 'user-added'])
+
+const translateRole = (role) => {
+  const roleMap = {
+    [ROLES.ADMIN]: t("admin"),
+    [ROLES.ATTENDANT]: t("attendant"),
+  }
+  return roleMap[role] || role
+}
 
 const columns = computed(() => {
   const baseColumns = [
@@ -62,20 +71,20 @@ const columns = computed(() => {
     {
       title: t("role"),
       key: 'role',
-      customRender: ({ record }) => record.role,
+      customRender: ({ record }) => translateRole(record.role),
       filters: [
-        { text: t("admin"), value: 'Admin' },
-        { text: t("attendant"), value: 'Attendant' },
+        { text: t("admin"), value: ROLES.ADMIN },
+        { text: t("attendant"), value: ROLES.ATTENDANT },
       ],
+
       onFilter: (value, record) => record.role === value,
       filterDropdown: ({ setSelectedKeys, selectedKeys = [], confirm, clearFilters }) => {
         const options = [
-          { label: t("admin"), value: 'Admin' },
-          { label: t("attendant"), value: 'Attendant' },
+          { label: t("admin"), value: ROLES.ADMIN },
+          { label: t("attendant"), value: ROLES.ATTENDANT },
         ]
-
         const checkedValues = ref([...selectedKeys])
-
+        
         const handleChange = (values) => {
           checkedValues.value = values
           setSelectedKeys(values)
